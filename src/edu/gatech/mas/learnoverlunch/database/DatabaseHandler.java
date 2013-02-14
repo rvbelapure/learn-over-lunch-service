@@ -13,12 +13,11 @@ public class DatabaseHandler {
 	static String dbName = PropertyReader.instance.getProperty("mysql_dbname");
 	static String driver = PropertyReader.instance.getProperty("mysql_driver");
 	
-	public Connection getConnection() {
+	public static Connection getConnection() {
 		Connection conn = null;
-		
 		try {
 			Class.forName(driver).newInstance();
-			conn = DriverManager.getConnection(url, username, password);
+			conn = DriverManager.getConnection(url+dbName, username, password);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -31,4 +30,5 @@ public class DatabaseHandler {
 		
 		return conn;
 	}
+	
 }
