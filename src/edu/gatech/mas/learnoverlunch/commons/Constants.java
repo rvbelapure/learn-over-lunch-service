@@ -4,4 +4,5 @@ public interface Constants {
 	String PROP_FILE_NAME = "/home/raghavendra/mas/workspaces/webservice/LearnOverLunchService/learnoverlunch.properties";
 	String RESP_YES = "yes";
 	String RESP_NO = "no";
+	String RESP_MALFORMED = "Malformed request";
 }

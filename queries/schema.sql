@@ -1,6 +1,7 @@
 -- execute everything after this as 'learn' user in mysql
 -- creating tables
 
+create database loldb;
 use loldb;
 
 create table users_mst
