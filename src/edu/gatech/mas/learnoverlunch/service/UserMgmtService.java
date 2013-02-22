@@ -230,7 +230,7 @@ public class UserMgmtService {
 			return Constants.RESP_MALFORMED;
 		}
 		Connection conn;
-		ResultSet rset, rs;
+		ResultSet rs;
 		conn = DatabaseHandler.getConnection();
 
 		try {
@@ -266,4 +266,48 @@ public class UserMgmtService {
 		else
 			return Constants.RESP_NO;
 	}
+	
+	@Path("/friend/accept")
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String acceptFriend(String req) throws JSONException {
+		JSONObject request;
+		String myuname, profileuname;
+		try {
+			request = new JSONObject(req);
+			myuname = request.getString("myuname");
+			profileuname = request.getString("profileuname");
+		} catch (JSONException e) {
+			return Constants.RESP_MALFORMED;
+		}
+		Connection conn;
+		ResultSet rs;
+		boolean status = false;
+		conn = DatabaseHandler.getConnection();
+		try {
+			Statement stmt = (Statement) conn.createStatement();
+			rs = stmt.executeQuery("select * from friends_mst where " +
+					"OR (initiator='" + profileuname
+					+ "' and acceptor='" + myuname + "');");
+			if (rs.next()) {
+				if((rs.getString("status")).equals("pending"))
+				{
+					status = stmt.execute("update friends_mst" +
+							"set status='yes'" +
+							"where (initiator='" + profileuname
+					+ "' and acceptor='" + myuname + "');");
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		if(status)
+			return Constants.RESP_YES;
+		else
+			return Constants.RESP_NO;
+	}
+
+
 }

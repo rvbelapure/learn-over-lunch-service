@@ -14,3 +14,4 @@ Endpoint		Consume					Produce
 	/friend
 		/get	(str) uname				(jsonarr) arr of jsons - profiles
 		/add	(json) myuname, profileuname		(str), RESP_NO / RESP_YES / RESP_MALFORMED
+		/accept	(json) myuname, profileuname		(str), RESP_NO / RESP_YES / RESP_MALFORMED
