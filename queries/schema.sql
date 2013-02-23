@@ -34,12 +34,17 @@ rating float not null);
 
 create table events_mst
 (event_id integer primary key auto_increment,
-event_date timestamp not null,
+event_date varchar(100) not null,
 event_place varchar(50) not null,
 topic_name varchar(100) not null,
 topic_category varchar(20) not null,
-max_allowed_members integer not null,
-event_members varchar(1000) not null);
+max_allowed_members integer not null);
+
+create table event_attendees
+(event integer not null,
+event_members varchar(20) not null,
+FOREIGN KEY(event) references events_mst(event_id),
+FOREIGN KEY(event_members) references users_mst(uname));
 
 create table notification_mst
 (noti_id integer primary key auto_increment,

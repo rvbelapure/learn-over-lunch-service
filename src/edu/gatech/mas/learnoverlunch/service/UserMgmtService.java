@@ -71,7 +71,8 @@ public class UserMgmtService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String addUser(JSONObject user) {
+	public String addUser(String req) throws JSONException {
+		JSONObject user = new JSONObject(req);
 		String uname = null, fname = null, lname = null, passwd = null, dob = null, email = null, phone = null, edu = null, work = null;
 		float rating = 0;
 		try {
@@ -95,9 +96,15 @@ public class UserMgmtService {
 					+ fname + "','" + lname + "','" + passwd + "','" + dob
 					+ "','" + email + "','" + phone + "','" + edu + "','"
 					+ work + "'," + rating + ");");
-			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally
+		{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return Constants.RESP_YES;
 	}
@@ -301,8 +308,14 @@ public class UserMgmtService {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally
+		{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
-
 		if(status)
 			return Constants.RESP_YES;
 		else

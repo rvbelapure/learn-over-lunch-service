@@ -14,3 +14,9 @@ insert into friends_mst values ("cheema", "rizu", "yes");
 insert into friends_mst values ("raghav", "rizu", "yes");
 insert into friends_mst values ("rizu", "yatish", "pending");
 insert into friends_mst values ("yatish", "abhi", "pending");
+
+insert into categories_mst values (null, "computer science");
+insert into categories_mst values (null, "physics");
+insert into categories_mst values (null, "sports");
+insert into categories_mst values (null, "latest events");
+insert into categories_mst values (null, "politics");
