@@ -9,16 +9,23 @@ create table users_mst
 fname varchar(30) not null,
 lname varchar(30) not null,
 passwd varchar(20) not null,
-dob varchar(20),
-email varchar(50),
-phone varchar(20),
-edu varchar(20),
-work varchar(20),
+dob varchar(20) not null,
+email varchar(50) not null,
+phone varchar(20) not null,
+edu varchar(20) not null,
+work varchar(20) not null,
 rating float not null);
 
 create table categories_mst
 (cat_id integer primary key auto_increment,
 cat_name varchar(20) not null);
+
+create table friends_mst
+(initiator varchar(20) not null,
+acceptor varchar(20) not null,
+status varchar(10) not null,
+FOREIGN KEY(initiator) references users_mst(uname),
+FOREIGN KEY(acceptor) references users_mst(uname));
 
 create table restaurants_mst
 (rest_name varchar(50) primary key,

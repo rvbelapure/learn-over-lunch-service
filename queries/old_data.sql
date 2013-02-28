@@ -10,6 +10,11 @@ insert into users_mst values ("cheema","Karanjit Singh","Cheema","cheema","1 JAN
 insert into users_mst values ("aakash","Aakash","Goel","aakash","1 JAN 1990","aakash@localhost","404-123-5467","gatech","oracle",3);
 insert into users_mst values ("pallavi","Pallavi","Prasad","pallavi","1 JAN 1990","pallavi@localhost","404-123-5467","gatech","none",3);
 
+insert into friends_mst values ("cheema", "rizu", "yes");
+insert into friends_mst values ("raghav", "rizu", "yes");
+insert into friends_mst values ("rizu", "yatish", "pending");
+insert into friends_mst values ("yatish", "abhi", "pending");
+
 insert into categories_mst values (null, "computer science");
 insert into categories_mst values (null, "physics");
 insert into categories_mst values (null, "sports");

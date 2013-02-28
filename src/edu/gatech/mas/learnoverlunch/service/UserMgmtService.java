@@ -69,9 +69,10 @@ public class UserMgmtService {
 
 	@Path("/signup")
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String addUser(String req) throws JSONException {
+		System.out.println("signup request : " + req);
 		JSONObject user = new JSONObject(req);
 		String uname = null, fname = null, lname = null, passwd = null, dob = null, email = null, phone = null, edu = null, work = null;
 		float rating = 0;
@@ -80,16 +81,33 @@ public class UserMgmtService {
 			fname = user.getString("fname");
 			lname = user.getString("lname");
 			passwd = user.getString("passwd");
-			dob = user.getString("dob");
-			email = user.getString("email");
-			phone = user.getString("phone");
-			edu = user.getString("edu");
-			work = user.getString("work");
+//			dob = user.getString("dob");
+//			email = user.getString("email");
+//			phone = user.getString("phone");
+//			edu = user.getString("edu");
+//			work = user.getString("work");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 
 		Connection conn = DatabaseHandler.getConnection();
+		
+		try {
+			Statement st = (Statement) conn.createStatement();
+			ResultSet rset = st.executeQuery("select * from users_mst " +
+					"where uname='" + uname +"';");
+			if(rset.next())
+			{
+				try {
+				st.close();
+				conn.close();
+				} catch(SQLException se){}
+				return Constants.ERR_UNAME_EXISTS;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
 		try {
 			Statement st = (Statement) conn.createStatement();
 			st.execute("insert into users_mst values ('" + uname + "','"
@@ -106,7 +124,7 @@ public class UserMgmtService {
 				e.printStackTrace();
 			}
 		}
-		return Constants.RESP_YES;
+		return Constants.ERR_SUCCESS;
 	}
 
 	@Path("/profile")
