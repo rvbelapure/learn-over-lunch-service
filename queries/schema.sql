@@ -22,6 +22,7 @@ cat_name varchar(20) not null);
 
 create table restaurants_mst
 (rest_name varchar(50) primary key,
+rest_city varchar(50) not null,
 event_count integer not null,
 rating float not null);
 
