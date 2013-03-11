@@ -3,6 +3,8 @@ package edu.gatech.mas.learnoverlunch.service;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -22,31 +24,39 @@ import edu.gatech.mas.learnoverlunch.database.DatabaseHandler;
 @Path("/eventservice")
 public class EventMgmtService {
 
+	@SuppressWarnings("deprecation")
 	@Path("/create")
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String createEvent(String req)
 	{
 		JSONObject event = null;
-		String date, place, topic_name, topic_category, uname;
+		String place, topic_name, topic_category, uname, topic_desc;
+		Timestamp tstp;
+		Date date;
 		int max_members;
 		try {
 			event = new JSONObject(req);
-			date = event.getString("event_date");
-			place = event.getString("evnt_place");
+			date = new Date(event.getString("event_date"));
+			place = event.getString("event_place");
 			topic_name = event.getString("topic_name");
 			topic_category = event.getString("topic_category");
+			topic_desc = event.getString("topic_desc");
 			max_members = event.getInt("max_allowed_members");
-			uname = event.getString("event_members");
+			uname = event.getString("username");
 		} catch (JSONException e) {
+			e.printStackTrace();
 			return Constants.RESP_MALFORMED;
 		}
+		tstp = new Timestamp(date.getTime());
 		Connection conn = DatabaseHandler.getConnection();
+		System.out.println(date);
+		System.out.println(tstp);
 		try {
 			Statement st = (Statement) conn.createStatement();
 			st.execute("insert into events_mst values " +
-					"( null, '"+ date +"', '" + place + "', '" + topic_name + "', '" + topic_category 
+					"( null, '"+ tstp +"', '" + place + "', '" + topic_name + "', '" + topic_category + "', '" + topic_category 
 					+ "', " + max_members + ");");
 			ResultSet rset = st.executeQuery("select MAX(event_id) as maxid from events_mst;");
 			int id;
@@ -58,7 +68,7 @@ public class EventMgmtService {
 			st.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return Constants.RESP_NO;
+			return Constants.ERR_FAILURE_GENERIC;
 		} finally
 		{
 			try {
@@ -67,7 +77,7 @@ public class EventMgmtService {
 				e.printStackTrace();
 			}
 		}
-		return Constants.RESP_YES;
+		return Constants.ERR_SUCCESS;
 	}
 	
 	@Path("/get/event/byuser")
