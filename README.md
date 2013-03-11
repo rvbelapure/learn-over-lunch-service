@@ -21,6 +21,9 @@ Endpoint			Consume					Produce
 	/get
 	     /event
 	    	/byuser		(str) uname				(json) arr of jsons - events
-	    	/bycategory	(str) uname				(json) arr of jsons - events
+	    	/bycategory	(str) category				(json) arr of jsons - events
 	     /members		(str) eventid				(json) arr of jsons - profiles
 	/isMember		(json) uname, event_id			(str) RESP_NO / RESP_YES / RESP_MALFORMED
+
+/categoryservice
+	/get			<nothing>				(json) arr of jsons - categories

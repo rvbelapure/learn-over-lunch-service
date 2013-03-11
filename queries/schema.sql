@@ -28,10 +28,11 @@ rating float not null);
 
 create table events_mst
 (event_id integer primary key auto_increment,
-event_date varchar(100) not null,
+event_date timestamp not null,
 event_place varchar(50) not null,
 topic_name varchar(100) not null,
 topic_category varchar(20) not null,
+topic_desc varchar(200),
 max_allowed_members integer not null);
 
 create table event_attendees
