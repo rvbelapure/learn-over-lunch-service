@@ -51,6 +51,8 @@ public class EventMgmtService {
 		}
 		tstp = new Timestamp(date.getTime());
 		Connection conn = DatabaseHandler.getConnection();
+		System.out.println(date);
+		System.out.println(tstp);
 		try {
 			Statement st = (Statement) conn.createStatement();
 			st.execute("insert into events_mst values " +
@@ -97,10 +99,12 @@ public class EventMgmtService {
 					"(select event from event_attendees " +
 					"where event_members='" + uname + "');");
 			while(rset.next()){
+				Timestamp t = rset.getTimestamp("event_date");
+				Date d = new Date(t.getTime());
 				o = new JSONObject();
 				o.put("event_id", rset.getInt("event_id"));
-				o.put("event_date",rset.getString("event_date"));
-				o.put("event_place",rset.getString("event_place"));
+				o.put("event_date",d.toString());
+				o.put("event_place", rset.getString("event_place"));
 				o.put("topic_name", rset.getString("topic_name"));
 				o.put("topic_category",rset.getString("topic_category"));
 				o.put("max_allowed_members", rset.getInt("max_allowed_members"));
