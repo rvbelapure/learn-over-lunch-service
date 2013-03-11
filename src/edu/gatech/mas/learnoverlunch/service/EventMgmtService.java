@@ -51,6 +51,8 @@ public class EventMgmtService {
 		}
 		tstp = new Timestamp(date.getTime());
 		Connection conn = DatabaseHandler.getConnection();
+		System.out.println(date);
+		System.out.println(tstp);
 		try {
 			Statement st = (Statement) conn.createStatement();
 			st.execute("insert into events_mst values " +
