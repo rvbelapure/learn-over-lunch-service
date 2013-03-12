@@ -91,13 +91,15 @@ public class EventMgmtService {
 		Connection conn = DatabaseHandler.getConnection();
 		Statement st = null;
 		ResultSet rset;
-		
+		System.out.println("Request : Get events for user - " + uname);
 		try {
 			st = (Statement) conn.createStatement();
 			rset = st.executeQuery("select * from events_mst " +
 					"where event_id in " +
 					"(select event from event_attendees " +
-					"where event_members='" + uname + "');");
+					"where event_members='" + uname + "') " +
+					"AND event_date > (CURDATE() - INTERVAL 2 DAY) " +
+					"order by event_date ASC;");
 			while(rset.next()){
 				Timestamp t = rset.getTimestamp("event_date");
 				Date d = new Date(t.getTime());
@@ -107,6 +109,7 @@ public class EventMgmtService {
 				o.put("event_place", rset.getString("event_place"));
 				o.put("topic_name", rset.getString("topic_name"));
 				o.put("topic_category",rset.getString("topic_category"));
+				o.put("topic_desc", rset.getString("topic_desc"));
 				o.put("max_allowed_members", rset.getInt("max_allowed_members"));
 				arr.put(o);
 			}
@@ -123,7 +126,7 @@ public class EventMgmtService {
 				e.printStackTrace();
 			}
 		}
-		
+		System.out.println("Response : " + arr.toString());
 		return arr.toString();
 	}
 	
@@ -138,18 +141,23 @@ public class EventMgmtService {
 		Connection conn = DatabaseHandler.getConnection();
 		Statement st = null;
 		ResultSet rset;
-		
+		System.out.println("Request : Get events for category - " + category);
 		try {
 			st = (Statement) conn.createStatement();
 			rset = st.executeQuery("select * from events_mst " +
-					"where topic_category='" + category + "';");
+					"where topic_category='" + category + "' " +
+					"AND event_date > CURDATE() " +
+					"order by event_date ASC;");
 			while(rset.next()){
+				Timestamp t = rset.getTimestamp("event_date");
+				Date d = new Date(t.getTime());
 				o = new JSONObject();
 				o.put("event_id", rset.getInt("event_id"));
-				o.put("event_date",rset.getString("event_date"));
+				o.put("event_date",d.toString());
 				o.put("event_place",rset.getString("event_place"));
 				o.put("topic_name", rset.getString("topic_name"));
 				o.put("topic_category",rset.getString("topic_category"));
+				o.put("topic_desc", rset.getString("topic_desc"));
 				o.put("max_allowed_members", rset.getInt("max_allowed_members"));
 				arr.put(o);
 			}
@@ -166,10 +174,58 @@ public class EventMgmtService {
 				e.printStackTrace();
 			}
 		}
-		
+		System.out.println("Response : " + arr.toString());
 		return arr.toString();
 	}
 	
+	@Path("/get/event/bylocation")
+	@POST
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getEventByLocation(String location)
+	{
+		JSONArray arr = new JSONArray();
+		JSONObject o;
+		Connection conn = DatabaseHandler.getConnection();
+		Statement st = null;
+		ResultSet rset;
+		System.out.println("Request : Get events for location - " + location);
+		try {
+			st = (Statement) conn.createStatement();
+			rset = st.executeQuery("select * from events_mst " +
+					"where event_place='" + location + "' " +
+					"AND event_date > CURDATE() " +
+					"order by event_date ASC;");
+			while(rset.next()){
+				Timestamp t = rset.getTimestamp("event_date");
+				Date d = new Date(t.getTime());
+				o = new JSONObject();
+				o.put("event_id", rset.getInt("event_id"));
+				o.put("event_date",d.toString());
+				o.put("event_place",rset.getString("event_place"));
+				o.put("topic_name", rset.getString("topic_name"));
+				o.put("topic_category",rset.getString("topic_category"));
+				o.put("topic_desc", rset.getString("topic_desc"));
+				o.put("max_allowed_members", rset.getInt("max_allowed_members"));
+				arr.put(o);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} finally
+		{
+			try {
+				st.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Response : " + arr.toString());
+		return arr.toString();
+	}
+
 	@Path("/get/members")
 	@POST
 	@Consumes(MediaType.TEXT_PLAIN)
@@ -198,7 +254,7 @@ public class EventMgmtService {
 				o.put("email", (rset.getString("email")));
 				o.put("phone", (rset.getString("edu")));
 				o.put("work", (rset.getString("work")));
-				o.put("rating", (rset.getString("rating")));
+				o.put("rating", (rset.getFloat("rating")));
 				arr.put(o);
 			}
 		} catch (SQLException e) {
