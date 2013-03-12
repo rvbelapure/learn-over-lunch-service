@@ -15,6 +15,7 @@ Endpoint			Consume					Produce
 		/get		(str) uname				(jsonarr) arr of jsons - profiles
 		/add		(json) myuname, profileuname		(str) RESP_NO / RESP_YES / RESP_MALFORMED
 		/accept		(json) myuname, profileuname		(str) RESP_NO / RESP_YES / RESP_MALFORMED
+	/rateuser		(str) <uname>::<rating>			(str) RESP_NO / RESP_YES / RESP_MALFORMED
 
 /eventservice
 	/create			(json) <event details, uname>		(str) RESP_MALFORMED / RESP_YES / RESP_NO

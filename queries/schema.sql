@@ -14,7 +14,8 @@ email varchar(50),
 phone varchar(20),
 edu varchar(20),
 work varchar(20),
-rating float not null);
+rating float not null,
+ratecount integer not null);
 
 create table categories_mst
 (cat_id integer primary key auto_increment,

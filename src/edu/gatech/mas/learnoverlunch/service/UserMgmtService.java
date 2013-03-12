@@ -75,7 +75,8 @@ public class UserMgmtService {
 		System.out.println("signup request : " + req);
 		JSONObject user = new JSONObject(req);
 		String uname = null, fname = null, lname = null, passwd = null, dob = null, email = null, phone = null, edu = null, work = null;
-		float rating = 0;
+		float rating = (float) 2.5;
+		int ratecount = 1;
 		try {
 			uname = user.getString("uname");
 			fname = user.getString("fname");
@@ -113,7 +114,7 @@ public class UserMgmtService {
 			st.execute("insert into users_mst values ('" + uname + "','"
 					+ fname + "','" + lname + "','" + passwd + "','" + dob
 					+ "','" + email + "','" + phone + "','" + edu + "','"
-					+ work + "'," + rating + ");");
+					+ work + "'," + rating + ", " + ratecount + ");");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally
@@ -181,7 +182,8 @@ public class UserMgmtService {
 				response.put("email", (rset.getString("email")));
 				response.put("phone", (rset.getString("edu")));
 				response.put("work", (rset.getString("work")));
-				response.put("rating", (rset.getString("rating")));
+				response.put("rating", (rset.getFloat("rating")));
+				response.put("ratecount", (rset.getInt("ratecount")));
 			} else
 				response.put("errorcode", Constants.RESP_NO);
 		} catch (SQLException e) {
@@ -223,7 +225,8 @@ public class UserMgmtService {
 				o.put("email", (rset.getString("email")));
 				o.put("phone", (rset.getString("edu")));
 				o.put("work", (rset.getString("work")));
-				o.put("rating", (rset.getString("rating")));
+				o.put("rating", (rset.getFloat("rating")));
+				o.put("ratecount", (rset.getFloat("ratecount")));
 				respArray.put(o);
 			}
 		} catch (SQLException e) {
@@ -340,5 +343,61 @@ public class UserMgmtService {
 			return Constants.RESP_NO;
 	}
 
+	@Path("/rateuser")
+	@POST
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String rateUser(String req) {
+		String arr[] = req.split("::"); // Client sends username::rating
+										// string
+		String username = arr[0];
+		float rating,dbRating = -1;
+		int ratecount = -1;
+		try {
+			rating = Float.parseFloat(arr[1]);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			rating = -1;
+		}
+		System.out.println("User rating : " + username + " / " + rating);
+		if (username == null || rating == -1)
+			return Constants.RESP_MALFORMED;
+		Connection conn;
+		ResultSet rset;
+		conn = DatabaseHandler.getConnection();
+		try {
+			Statement st = (Statement) conn.createStatement();
+			rset = st.executeQuery("select * from users_mst where uname='"
+					+ username + "';");
+			if (rset.next())
+			{
+				dbRating = rset.getFloat("rating");
+				ratecount = rset.getInt("ratecount");
+			}
+			st.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		if(dbRating == -1 || ratecount == -1)
+			return Constants.ERR_FAILURE_GENERIC;
+		
+		dbRating = ((dbRating * ratecount) + rating) / (float) (ratecount + 1);
+		try {
+			Statement st = (Statement) conn.createStatement();
+			st.execute("update users_mst " +
+					   "set rating=" + dbRating + ", ratecount=" + (ratecount + 1) +" " +
+					   "where uname='" + username + "';");
+			st.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return Constants.ERR_SUCCESS;
+	}
 
 }

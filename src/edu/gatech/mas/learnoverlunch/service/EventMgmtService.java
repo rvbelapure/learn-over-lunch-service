@@ -255,6 +255,7 @@ public class EventMgmtService {
 				o.put("phone", (rset.getString("edu")));
 				o.put("work", (rset.getString("work")));
 				o.put("rating", (rset.getFloat("rating")));
+				o.put("ratecount", (rset.getInt("ratecount")));
 				arr.put(o);
 			}
 		} catch (SQLException e) {
