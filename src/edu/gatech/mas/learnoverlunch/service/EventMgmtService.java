@@ -36,10 +36,11 @@ public class EventMgmtService {
 		Timestamp tstp;
 		Date date;
 		int max_members;
+		System.out.println("Create event request : " + req);
 		try {
 			event = new JSONObject(req);
 			date = new Date(event.getString("event_date"));
-			place = event.getString("event_place");
+			place = event.getString("event_place").toLowerCase();
 			topic_name = event.getString("topic_name");
 			topic_category = event.getString("topic_category");
 			topic_desc = event.getString("topic_desc");
@@ -51,12 +52,11 @@ public class EventMgmtService {
 		}
 		tstp = new Timestamp(date.getTime());
 		Connection conn = DatabaseHandler.getConnection();
-		System.out.println(date);
-		System.out.println(tstp);
+		System.out.println("Create event - date = "+ date + ", timestamp = " + tstp);
 		try {
 			Statement st = (Statement) conn.createStatement();
 			st.execute("insert into events_mst values " +
-					"( null, '"+ tstp +"', '" + place + "', '" + topic_name + "', '" + topic_category + "', '" + topic_category 
+					"( null, '"+ tstp +"', '" + place + "', '" + topic_name + "', '" + topic_category + "', '" + topic_desc 
 					+ "', " + max_members + ");");
 			ResultSet rset = st.executeQuery("select MAX(event_id) as maxid from events_mst;");
 			int id;

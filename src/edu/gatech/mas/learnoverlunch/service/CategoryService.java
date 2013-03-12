@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -19,9 +21,12 @@ import edu.gatech.mas.learnoverlunch.database.DatabaseHandler;
 @Path("/categoryservice")
 public class CategoryService {
 	@Path("/get")
+	@POST
+	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String fetchCategories()
 	{
+//		System.out.println("Get categories - arg : " + noarg);
 		Connection conn;
 		ResultSet rset;
 		conn = DatabaseHandler.getConnection();
