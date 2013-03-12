@@ -348,29 +348,38 @@ public class UserMgmtService {
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String rateUser(String req) {
-		String arr[] = req.split("::"); // Client sends username::rating
-										// string
-		String username = arr[0];
-		float rating,dbRating = -1;
-		int ratecount = -1;
+		System.out.println("Rating request : " + req);
+		JSONObject o; 
+		float rating,prev_rating;
+		String fname, lname;
 		try {
-			rating = Float.parseFloat(arr[1]);
-		} catch (ArrayIndexOutOfBoundsException e) {
-			rating = -1;
-		}
-		System.out.println("User rating : " + username + " / " + rating);
-		if (username == null || rating == -1)
+			o = new JSONObject(req);
+			fname = o.getString("fname");
+			lname = o.getString("lname");
+			prev_rating = Float.parseFloat(o.getString("prev_rating"));
+			rating = Float.parseFloat(o.getString("curr_rating"));
+		} catch (NumberFormatException e1) {
+			e1.printStackTrace();
 			return Constants.RESP_MALFORMED;
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+			return Constants.RESP_MALFORMED;
+		}
+		
 		Connection conn;
 		ResultSet rset;
 		conn = DatabaseHandler.getConnection();
+		String username = null;
+		int ratecount = -1;
+		float dbRating = prev_rating;
+		
 		try {
 			Statement st = (Statement) conn.createStatement();
-			rset = st.executeQuery("select * from users_mst where uname='"
-					+ username + "';");
+			rset = st.executeQuery("select uname, ratecount from users_mst " +
+					"where fname='" + fname +"' AND lname='" + lname +"';" );
 			if (rset.next())
 			{
-				dbRating = rset.getFloat("rating");
+				username = rset.getString("uname");
 				ratecount = rset.getInt("ratecount");
 			}
 			st.close();
@@ -378,9 +387,10 @@ public class UserMgmtService {
 			e.printStackTrace();
 		}
 		
-		if(dbRating == -1 || ratecount == -1)
-			return Constants.ERR_FAILURE_GENERIC;
-		
+		System.out.println("User rating : " + username + " / " + rating);
+		if (username == null || ratecount == -1)
+			return Constants.RESP_MALFORMED;
+				
 		dbRating = ((dbRating * ratecount) + rating) / (float) (ratecount + 1);
 		try {
 			Statement st = (Statement) conn.createStatement();
