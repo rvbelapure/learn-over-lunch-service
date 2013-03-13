@@ -278,7 +278,7 @@ public class EventMgmtService {
 	
 	@Path("/isMember")
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String isMember(String req)
 	{
