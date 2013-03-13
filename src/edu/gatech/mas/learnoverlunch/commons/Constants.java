@@ -9,4 +9,6 @@ public interface Constants {
 	String ERR_SUCCESS = "Operation Successful !!";
 	String ERR_FAILURE_GENERIC = "Operation Failed !!";
 	String ERR_UNAME_EXISTS = "Username already exists!!";
+	String ERR_ALREADY_MEMBER = "Already registered.";
+	String ERR_EVENT_FULL = "The event is already full.";
 }
