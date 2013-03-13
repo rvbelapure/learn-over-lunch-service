@@ -232,6 +232,7 @@ public class EventMgmtService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getMembersForEvent(String eventid)
 	{
+		System.out.println("Request - get members : " + eventid);
 		JSONArray arr = new JSONArray();
 		int evid = Integer.parseInt(eventid);
 		JSONObject o;
@@ -271,7 +272,7 @@ public class EventMgmtService {
 				e.printStackTrace();
 			}
 		}
-		
+		System.out.println("Response : " + arr.toString());
 		return arr.toString();
 	}
 	
@@ -319,4 +320,74 @@ public class EventMgmtService {
 		
 		return Constants.RESP_NO;
 	}
+	
+	@Path("/eventjoin")
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String joinEvent(String req)
+	{
+		System.out.println("Request - Join the event : " + req);
+		String uname = null;
+		int eventid = 0;
+		try {
+			JSONObject o = new JSONObject(req);
+			uname = o.getString("uname");
+			eventid = o.getInt("event_id");
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return Constants.RESP_MALFORMED;
+		}
+		
+		Connection conn = DatabaseHandler.getConnection();
+		Statement st = null;
+		ResultSet rset;
+		
+		try {
+			st = (Statement) conn.createStatement();
+			st.execute("");
+			rset = st.executeQuery("select * from event_attendees " +
+					"where event="+ eventid + " and event_members='" + uname + "';" );
+			if(rset.next())
+				return Constants.ERR_ALREADY_MEMBER;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+		
+		int max_members = -1, current_members = -1;
+		
+			try {
+				rset = st.executeQuery("select count(event_members) as cnt " +
+						"from event_attendees " +
+						"where event=" + eventid + ";");
+				if(rset.next())
+					current_members = rset.getInt("cnt");
+				rset.close();
+				
+				rset = st.executeQuery("select * from events_mst " +
+						"where event_id=" + eventid + ";");
+				if(rset.next())
+					max_members = rset.getInt("max_allowed_members");
+				rset.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		
+		if(current_members == -1 || max_members == -1)
+			return Constants.ERR_FAILURE_GENERIC;
+		if(current_members >= max_members)
+			return Constants.ERR_EVENT_FULL;
+		
+		try {
+			st.execute("insert into event_attendees values (" + eventid + ", '" + uname +
+					"');");
+			st.close();
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return Constants.ERR_SUCCESS;
+	}
+
 }

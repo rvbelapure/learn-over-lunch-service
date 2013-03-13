@@ -26,6 +26,7 @@ Endpoint			Consume					Produce
 	    	/bylocation	(str) location				(json) arr of jsons - events
 	     /members		(str) eventid				(json) arr of jsons - profiles
 	/isMember		(json) uname, event_id			(str) RESP_NO / RESP_YES / RESP_MALFORMED
+	/eventjoin		(json) uname, event_id			(str) RESP_NO / RESP_YES / RESP_MALFORMED
 
 /categoryservice
 	/get			<nothing>				(json) arr of jsons - categories
