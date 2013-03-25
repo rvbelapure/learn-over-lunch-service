@@ -11,6 +11,7 @@ Endpoint			Consume					Produce
 	/auth			(str) <uname>::<passwd>			(str) RESP_YES / RESP_NO
 	/signup			(json) <full profile>			(str) RESP_YES / RESP_NO
 	/profile		(json) myuname, profileuname		(json) errorcode, isFriend, <full profile>
+	/getname		(str) <uname>				(str) <fname>' '<lname>
 	/friend
 		/get		(str) uname				(jsonarr) arr of jsons - profiles
 		/add		(json) myuname, profileuname		(str) RESP_NO / RESP_YES / RESP_MALFORMED

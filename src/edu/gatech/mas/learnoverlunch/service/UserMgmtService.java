@@ -15,6 +15,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.mysql.jdbc.Statement;
+import com.sun.org.apache.xerces.internal.impl.xpath.XPath.Step;
 
 import edu.gatech.mas.learnoverlunch.commons.Constants;
 import edu.gatech.mas.learnoverlunch.database.DatabaseHandler;
@@ -197,6 +198,36 @@ public class UserMgmtService {
 		}
 
 		return response.toString();
+	}
+	
+	@Path("/getname")
+	@POST
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String getFullName(String uname)
+	{
+		Connection conn;
+		ResultSet rset, rs;
+		conn = DatabaseHandler.getConnection();
+		String returnStr = null;
+		try {
+			Statement stmt = (Statement) conn.createStatement();
+			rs = stmt.executeQuery("select * from users_mst where uname='" + uname + "';");
+			if(rs.next())
+				returnStr = rs.getString("fname") + " " + rs.getString("lname");
+			stmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally
+		{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return returnStr;
 	}
 
 	@Path("/friend/get")
