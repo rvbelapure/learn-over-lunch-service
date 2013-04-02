@@ -14,6 +14,11 @@ public class DatabaseHandler {
 	static String driver = PropertyReader.instance.getProperty("mysql_driver");
 	
 	public static Connection getConnection() {
+		username = "learn";
+		password = "learnpass!@#";
+		url = "jdbc:mysql://127.0.0.1:3306/";
+		dbName = "loldb";
+		driver = "com.mysql.jdbc.Driver";
 		Connection conn = null;
 		try {
 			Class.forName(driver).newInstance();
